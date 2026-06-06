@@ -1,4 +1,4 @@
-import { FormEvent, KeyboardEvent, ReactNode, useEffect, useRef, useState } from "react";
+import { Children, cloneElement, FormEvent, isValidElement, KeyboardEvent, ReactNode, useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { findProject, projects } from "../data/projects";
 import { logPool } from "../data/logs";
@@ -6,12 +6,56 @@ import { triggerShuriken } from "./motion/ShurikenBurst";
 import { pulseSection } from "../lib/sectionPulse";
 
 type OutputLine = {
+  id: string;
   command?: string;
   content: ReactNode;
   error?: boolean;
+  visibleCharacters?: number;
 };
 
+type CommandResult = Pick<OutputLine, "content" | "error">;
+type TypeMode = "char" | "line";
+
 const prompt = "shinobi@0xcontrolplane:~$";
+const createId = () => `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+const wait = (ms: number) => new Promise<void>((resolve) => window.setTimeout(resolve, ms));
+
+function textLength(node: ReactNode): number {
+  if (typeof node === "string" || typeof node === "number") return String(node).length;
+  if (Array.isArray(node)) return node.reduce((total, child) => total + textLength(child), 0);
+  if (isValidElement<{ children?: ReactNode }>(node)) return textLength(node.props.children);
+  return 0;
+}
+
+function revealNode(node: ReactNode, remaining: { value: number }): ReactNode {
+  if (typeof node === "string" || typeof node === "number") {
+    const text = String(node);
+    const visible = text.slice(0, Math.max(0, remaining.value));
+    remaining.value -= text.length;
+    return visible;
+  }
+  if (Array.isArray(node)) return node.map((child) => revealNode(child, remaining));
+  if (isValidElement<{ children?: ReactNode }>(node)) {
+    return cloneElement(node, undefined, revealNode(node.props.children, remaining));
+  }
+  return node;
+}
+
+function lineTargets(content: ReactNode): number[] {
+  const children = isValidElement<{ children?: ReactNode }>(content) && content.type === "div"
+    ? Children.toArray(content.props.children)
+    : [content];
+  let total = 0;
+  return children.map((child) => {
+    total += textLength(child);
+    return total;
+  });
+}
+
+function typeModeFor(command: string): TypeMode {
+  const base = command.toLowerCase().split(/\s+/)[0];
+  return ["help", "projects", "repos", "ls", "logs", "anime", "shinobi", "naruto", "history"].includes(base) ? "line" : "char";
+}
 
 const helpItems = [
   ["help", "show available commands"],
@@ -72,19 +116,31 @@ export function InteractiveTerminal() {
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(0);
   const [highlighted, setHighlighted] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   const [output, setOutput] = useState<OutputLine[]>([
-    { content: <span>Type <span className="text-sky-400">"help"</span> to see available commands.</span> },
+    { id: createId(), content: <span>Type <span className="text-sky-400">"help"</span> to see available commands.</span> },
   ]);
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const terminalEndRef = useRef<HTMLDivElement>(null);
+  const mountedRef = useRef(true);
+  const typingAbortRef = useRef(false);
+  const skipTypingRef = useRef(false);
+  const isTypingRef = useRef(false);
   const reduced = useReducedMotion();
 
   useEffect(() => {
     const container = scrollContainerRef.current;
-    const end = terminalEndRef.current;
-    if (container) container.scrollTo({ top: end?.offsetTop ?? container.scrollHeight, behavior: "smooth" });
+    if (container) container.scrollTop = container.scrollHeight;
   }, [output, history]);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      typingAbortRef.current = true;
+    };
+  }, []);
 
   useEffect(() => {
     let highlightTimeout: number | undefined;
@@ -104,7 +160,7 @@ export function InteractiveTerminal() {
     };
   }, []);
 
-  function resolveCommand(rawCommand: string): Omit<OutputLine, "command"> | "clear" {
+  function resolveCommand(rawCommand: string): CommandResult | "clear" {
     const [base = "", ...args] = rawCommand.trim().split(/\s+/);
     const command = base.toLowerCase();
     const argument = args.join(" ");
@@ -178,10 +234,38 @@ export function InteractiveTerminal() {
       : { error: true, content: <>Command not found: {rawCommand}. Type "help" to see available commands.</> };
   }
 
-  function execute(event: FormEvent) {
+  async function typeTerminalOutput(lineId: string, content: ReactNode, mode: TypeMode) {
+    const totalCharacters = textLength(content);
+    const targets = mode === "line"
+      ? lineTargets(content)
+      : Array.from({ length: totalCharacters }, (_, index) => index + 1);
+
+    typingAbortRef.current = false;
+    skipTypingRef.current = false;
+    isTypingRef.current = true;
+    setIsTyping(true);
+
+    try {
+      for (const target of targets) {
+        await wait(mode === "line" ? 65 : 10);
+        if (!mountedRef.current || typingAbortRef.current) return;
+        if (skipTypingRef.current) break;
+        setOutput((current) => current.map((line) => line.id === lineId ? { ...line, visibleCharacters: target } : line));
+      }
+    } finally {
+      if (mountedRef.current && !typingAbortRef.current) {
+        setOutput((current) => current.map((line) => line.id === lineId ? { ...line, visibleCharacters: totalCharacters } : line));
+        setIsTyping(false);
+        isTypingRef.current = false;
+        inputRef.current?.focus();
+      }
+    }
+  }
+
+  async function execute(event: FormEvent) {
     event.preventDefault();
     const rawCommand = input.trim();
-    if (!rawCommand) return;
+    if (!rawCommand || isTypingRef.current) return;
 
     const result = resolveCommand(rawCommand);
     const nextHistory = [...history, rawCommand];
@@ -191,6 +275,7 @@ export function InteractiveTerminal() {
 
     if (result === "clear") {
       setOutput([]);
+      setIsTyping(false);
       scrollContainerRef.current?.scrollTo({ top: 0 });
       return;
     }
@@ -200,10 +285,18 @@ export function InteractiveTerminal() {
     const baseCommand = rawCommand.toLowerCase().split(/\s+/)[0];
     if (baseCommand === "logs") pulseSection("logs");
     if (baseCommand === "projects" || baseCommand === "repos" || baseCommand === "ls") pulseSection("projects");
-    setOutput((current) => [...current, { command: rawCommand, ...result }]);
+    const lineId = createId();
+    setOutput((current) => [...current, { id: lineId, command: rawCommand, visibleCharacters: 0, ...result }]);
+    await typeTerminalOutput(lineId, result.content, typeModeFor(rawCommand));
   }
 
   function navigateHistory(event: KeyboardEvent<HTMLInputElement>) {
+    if (event.key === "Escape" && isTypingRef.current) {
+      event.preventDefault();
+      skipTypingRef.current = true;
+      return;
+    }
+    if (isTypingRef.current) return;
     if (event.key !== "ArrowUp" && event.key !== "ArrowDown") return;
     event.preventDefault();
     const next = event.key === "ArrowUp" ? Math.max(0, historyIndex - 1) : Math.min(history.length, historyIndex + 1);
@@ -223,15 +316,18 @@ export function InteractiveTerminal() {
         </div>
       </div>
       <div ref={scrollContainerRef} className="terminal-body" aria-live="polite">
-        {output.map((line, index) => (
-          <motion.div key={index} className="mb-4" initial={{ opacity: 0, y: reduced ? 0 : 4 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
+        {output.map((line) => (
+          <motion.div key={line.id} className="mb-4" initial={{ opacity: 0, y: reduced ? 0 : 4 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
             {line.command && <p className="mb-1 text-[#E8EFEA]"><span className="text-[#A7C957]">{prompt}</span> {line.command}</p>}
-            <div className={`${line.error ? "text-red-400" : "text-slate-400"} break-words`}>{line.content}</div>
+            <div className={`${line.error ? "text-red-400" : "text-slate-400"} break-words`}>
+              {line.visibleCharacters === undefined ? line.content : revealNode(line.content, { value: line.visibleCharacters })}
+            </div>
           </motion.div>
         ))}
+        {isTyping && <p className="mb-2 font-mono text-xs text-[#A7C957]">transmitting<span className="animate-pulse">... press Esc to skip</span></p>}
         <form onSubmit={execute} className="flex items-center gap-2">
           <label htmlFor="terminal-input" className="shrink-0 text-[#A7C957]">{prompt}</label>
-          <input ref={inputRef} id="terminal-input" value={input} onChange={(event) => setInput(event.target.value)} onKeyDown={navigateHistory} className="min-w-0 flex-1 bg-transparent text-slate-200 caret-sky-400 outline-none" autoComplete="off" spellCheck={false} aria-label="Terminal command" />
+          <input ref={inputRef} id="terminal-input" value={input} onChange={(event) => !isTypingRef.current && setInput(event.target.value)} onKeyDown={navigateHistory} readOnly={isTyping} aria-readonly={isTyping} className="min-w-0 flex-1 bg-transparent text-slate-200 caret-sky-400 outline-none read-only:cursor-wait read-only:opacity-60" autoComplete="off" spellCheck={false} aria-label="Terminal command" />
         </form>
         <div ref={terminalEndRef} />
       </div>
