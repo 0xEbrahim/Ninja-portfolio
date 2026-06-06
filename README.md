@@ -42,7 +42,7 @@ npm run preview
 The Vite base path is configured in `vite.config.ts`.
 
 - For a user site such as `0xEbrahim.github.io`, keep `base: "/"`.
-- For a project site such as `0xEbrahim.github.io/portfolio`, change it to `base: "/portfolio/"`.
+- For this project site, `vite.config.ts` uses `base: "/Ninja-portfolio/"`.
 
 Build the site, then deploy the contents of `dist/` through GitHub Pages or a GitHub Actions Pages workflow.
 # Ninja-portfolio
