@@ -39,10 +39,11 @@ npm run preview
 
 ## GitHub Pages Deployment
 
-The Vite base path is configured in `vite.config.ts`.
+This portfolio is configured as the root GitHub Pages user site:
 
-- For a user site such as `0xEbrahim.github.io`, keep `base: "/"`.
-- For this project site, `vite.config.ts` uses `base: "/Ninja-portfolio/"`.
+- Repository: `0xEbrahim/0xEbrahim.github.io`
+- URL: `https://0xEbrahim.github.io/`
+- Vite base: `base: "/"`
+- Pages source: GitHub Actions
 
-Build the site, then deploy the contents of `dist/` through GitHub Pages or a GitHub Actions Pages workflow.
-# Ninja-portfolio
+The GitHub Actions Pages workflow builds and deploys the contents of `dist/`.
