@@ -1,0 +1,29 @@
+import { ArrowUpRight, Github, Linkedin, Mail } from "lucide-react";
+import { FadeIn } from "./motion/FadeIn";
+import { StampBadge } from "./archive/StampBadge";
+
+export function ContactSection() {
+  return (
+    <section id="contact" className="section-block">
+      <FadeIn className="site-container">
+        <div className="mission-card angled-corner paper-noise px-6 py-12 sm:px-10 lg:flex lg:items-center lg:justify-between lg:px-14 lg:py-14">
+          <div className="max-w-2xl">
+            <StampBadge tone="jade" tilted>rendezvous: open</StampBadge>
+            <p className="section-label mt-6">Archive 05 · Rendezvous Point / Contact</p>
+            <h2 className="mt-4 text-3xl font-semibold tracking-[-0.03em] text-[#E9D8A6] sm:text-4xl">Send a signal.</h2>
+            <p className="mt-4 text-base leading-7 text-[#9AA89E]">Need someone who thinks in APIs, data flow, and failure boundaries? Open a channel.</p>
+          </div>
+          <div className="mt-8 flex flex-wrap gap-3 lg:mt-0">
+            <a href="mailto:ibrahiim.elsayeedev@gmail.com" className="button-primary"><Mail className="h-4 w-4" /> Email me</a>
+            <a href="https://www.linkedin.com/in/ibrahiimjr/" target="_blank" rel="noreferrer" className="button-secondary">
+              <Linkedin className="h-4 w-4" /> LinkedIn <ArrowUpRight className="h-3.5 w-3.5" />
+            </a>
+            <a href="https://github.com/0xEbrahim" target="_blank" rel="noreferrer" className="button-secondary">
+              <Github className="h-4 w-4" /> GitHub <ArrowUpRight className="h-3.5 w-3.5" />
+            </a>
+          </div>
+        </div>
+      </FadeIn>
+    </section>
+  );
+}
