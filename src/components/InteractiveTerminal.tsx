@@ -4,6 +4,7 @@ import { findProject, projects } from "../data/projects";
 import { logPool } from "../data/logs";
 import { triggerShuriken } from "./motion/ShurikenBurst";
 import { pulseSection } from "../lib/sectionPulse";
+import { cvFileName, cvUrl } from "../lib/cv";
 
 type OutputLine = {
   id: string;
@@ -54,7 +55,7 @@ function lineTargets(content: ReactNode): number[] {
 
 function typeModeFor(command: string): TypeMode {
   const base = command.toLowerCase().split(/\s+/)[0];
-  return ["help", "projects", "repos", "ls", "logs", "anime", "shinobi", "naruto", "history", "about", "profile", "cv"].includes(base) ? "line" : "char";
+  return ["help", "projects", "repos", "ls", "logs", "anime", "shinobi", "naruto", "history", "about", "profile", "cv", "resume"].includes(base) ? "line" : "char";
 }
 
 const helpItems = [
@@ -62,7 +63,8 @@ const helpItems = [
   ["whoami", "show compact identity summary"],
   ["about", "show detailed profile dossier"],
   ["profile", "alias for about"],
-  ["cv", "show CV-based backend profile"],
+  ["cv", "show CV download link"],
+  ["resume", "alias for cv"],
   ["skills / stack", "show backend skills and technologies"],
   ["projects / repos / ls", "show project index"],
   ["project <name> / repo <name>", "inspect a project"],
@@ -222,7 +224,7 @@ export function InteractiveTerminal() {
     const argument = args.join(" ");
 
     if (command === "clear") return "clear";
-    if (["about", "profile", "cv"].includes(command)) {
+    if (["about", "profile"].includes(command)) {
       return { content: argument === "--short" ? shortAbout() : aboutDossier() };
     }
     if (command === "project" || command === "repo") {
@@ -279,12 +281,20 @@ export function InteractiveTerminal() {
           <p>Email: <a href="mailto:ibrahiim.elsayeedev@gmail.com">ibrahiim.elsayeedev@gmail.com</a></p>
         </div>
       ),
+      cv: (
+        <div className="space-y-1">
+          <p>CV file ready.</p>
+          <p>Use the Download CV button in the page, or open:</p>
+          <a href={cvUrl} download={cvFileName}>{cvUrl}</a>
+        </div>
+      ),
       history: history.length ? <div className="space-y-1">{history.map((item, index) => <p key={`${item}-${index}`}>{index + 1} · {item}</p>)}</div> : <p>No commands in history.</p>,
     };
 
     const aliases: Record<string, string> = {
       repos: "projects",
       ls: "projects",
+      resume: "cv",
     };
     const result = commands[aliases[command] ?? command];
     return result
@@ -370,7 +380,7 @@ export function InteractiveTerminal() {
         <span className="h-2.5 w-2.5 rounded-full bg-green-400/70" />
         <div className="ml-3 min-w-0">
           <p className="font-mono text-xs text-[#E9D8A6]">Command Console</p>
-          <p className="mt-0.5 break-words font-mono text-[10px] text-[#69766D]">// try: help, about, projects, project agora, logs, anime</p>
+          <p className="mt-0.5 break-words font-mono text-[10px] text-[#69766D]">// try: help, about, cv, projects, project agora, logs, anime</p>
         </div>
       </div>
       <div ref={scrollContainerRef} className="terminal-body" aria-live="polite">

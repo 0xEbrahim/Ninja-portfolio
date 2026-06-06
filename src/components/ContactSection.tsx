@@ -1,6 +1,7 @@
-import { ArrowUpRight, Github, Linkedin, Mail } from "lucide-react";
+import { ArrowUpRight, Download, Github, Linkedin, Mail } from "lucide-react";
 import { FadeIn } from "./motion/FadeIn";
 import { StampBadge } from "./archive/StampBadge";
+import { cvFileName, cvUrl } from "../lib/cv";
 
 export function ContactSection() {
   return (
@@ -21,6 +22,12 @@ export function ContactSection() {
             <a href="https://github.com/0xEbrahim" target="_blank" rel="noreferrer" className="button-secondary">
               <Github className="h-4 w-4" /> GitHub <ArrowUpRight className="h-3.5 w-3.5" />
             </a>
+            <div className="w-full sm:basis-full lg:max-w-xs">
+              <a href={cvUrl} download={cvFileName} className="button-secondary shinobi-slash-hover w-full">
+                <Download className="h-4 w-4" /> Download CV
+              </a>
+              <p className="mt-2 font-mono text-[10px] leading-5 text-[#69766D]">Grab the PDF version of my backend engineering profile.</p>
+            </div>
           </div>
         </div>
       </FadeIn>

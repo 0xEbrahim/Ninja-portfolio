@@ -1,10 +1,11 @@
-import { ArrowRight, Target, Terminal } from "lucide-react";
+import { ArrowRight, Download, Target, Terminal } from "lucide-react";
 import { InteractiveTerminal } from "./InteractiveTerminal";
 import { FadeIn } from "./motion/FadeIn";
 import { MagneticCard } from "./motion/MagneticCard";
 import { triggerShuriken } from "./motion/ShurikenBurst";
 import { StampBadge } from "./archive/StampBadge";
 import { AsciiShinobiArtifact } from "./AsciiShinobiArtifact";
+import { cvFileName, cvUrl } from "../lib/cv";
 
 export function HeroSection() {
   function handleEnterConsole() {
@@ -34,6 +35,7 @@ export function HeroSection() {
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <a href="#projects" className="button-primary shinobi-slash-hover w-full sm:w-auto">Open Mission Records <ArrowRight className="h-4 w-4" /></a>
             <button type="button" className="button-secondary shinobi-slash-hover w-full sm:w-auto" onClick={handleEnterConsole}><Terminal className="h-4 w-4" /> Enter Command Console</button>
+            <a href={cvUrl} download={cvFileName} className="button-secondary shinobi-slash-hover w-full sm:w-auto"><Download className="h-4 w-4" /> Download CV</a>
           </div>
           <button
             type="button"
