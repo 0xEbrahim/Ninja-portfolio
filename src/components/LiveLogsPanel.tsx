@@ -72,7 +72,7 @@ export function LiveLogsPanel() {
   return (
     <section ref={sectionRef} id="logs" className={`section-block archive-section-alt ${isInView ? "signal-stream-active" : ""}`}>
       <FadeIn className="site-container">
-        <div className="mb-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div className="mb-10 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <SectionHeading
             label="Archive 01 · Signal Stream / Logs"
             title="Intercepted backend signals."
@@ -80,7 +80,7 @@ export function LiveLogsPanel() {
             className="mb-0"
           />
           <div className="flex flex-wrap items-center gap-2 pb-1">
-            <div className="mr-2 flex items-center gap-2 font-mono text-xs text-slate-400" aria-live="polite">
+            <div className="flex w-full flex-wrap items-center gap-2 font-mono text-xs text-slate-400 sm:mr-2 sm:w-auto" aria-live="polite">
               <span className={`h-2 w-2 rounded-full ${paused ? "bg-[#EE9B00]" : "animate-pulse bg-[#A7C957]"}`} />
               <span className={paused ? "text-amber-300" : "text-[#A7C957]"}>{paused ? "STREAM PAUSED" : "STREAM ACTIVE"}</span>
               <span>· events: {eventCount}</span>
@@ -101,7 +101,7 @@ export function LiveLogsPanel() {
         </div>
 
         <div className="signal-panel angled-corner paper-noise">
-          <div className="flex items-center justify-between border-b border-slate-800/70 px-4 py-3 font-mono text-xs text-slate-500 sm:px-5">
+          <div className="flex flex-col gap-1 border-b border-slate-800/70 px-4 py-3 font-mono text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-5">
             <span>intercepted-signals.log</span>
             <span>showing: {displayedLogs.length} · buffer: {visibleLogs.length}/8</span>
           </div>
@@ -124,15 +124,15 @@ export function LiveLogsPanel() {
                 >
                   <span className="shrink-0 text-slate-500">[{log.timestamp}]</span>
                   <span className={`log-level ${levelStyles[log.level]}`}>{log.level}</span>
-                  <span className="shrink-0 text-sky-400/80">{log.source}</span>
-                  <span className="min-w-0 text-slate-300">{log.message}</span>
+                  <span className="break-words text-sky-400/80">{log.source}</span>
+                  <span className="min-w-0 break-words text-slate-300">{log.message}</span>
                   {latest && <span className="new-log-badge">incoming</span>}
                 </motion.div>
               );
             })}
             </AnimatePresence>
           </div>
-          <div className="flex items-center gap-2 border-t border-slate-800/70 px-4 py-3 font-mono text-xs text-slate-500 sm:px-5">
+          <div className="flex flex-wrap items-center gap-2 border-t border-slate-800/70 px-4 py-3 font-mono text-xs text-slate-500 sm:px-5">
             <span className={`h-1.5 w-1.5 rounded-full ${paused ? "bg-[#EE9B00]" : "animate-pulse bg-[#A7C957]"}`} />
             {paused ? "stream paused" : "waiting for next event..."}
           </div>

@@ -18,13 +18,13 @@ function tone(status: Project["status"]) {
 
 function ProjectCard({ project }: { project: Project }) {
   return (
-    <article className="mission-card angled-corner paper-noise shinobi-slash-hover relative flex min-h-[420px] min-w-0 flex-col overflow-hidden p-5 transition duration-300 hover:-translate-y-1 hover:border-[#A7C957]/50 lg:p-6">
+    <article className="mission-card angled-corner paper-noise shinobi-slash-hover relative flex h-full min-w-0 flex-col overflow-hidden p-5 transition duration-300 hover:-translate-y-1 hover:border-[#A7C957]/50 sm:p-6">
       <span className="mission-file-tab">{project.featured ? "priority mission" : "mission file"}</span>
       <div className="relative z-[1] flex h-full flex-col">
-        <div className="mb-4 flex items-start justify-between gap-4">
+        <div className="mb-4 flex flex-col items-start gap-3 sm:flex-row sm:justify-between sm:gap-4">
         <div className="min-w-0">
           <p className="font-mono text-xs uppercase tracking-[0.24em] text-[#7AA874]">mission</p>
-          <h3 className="mt-2 break-words text-xl font-bold tracking-tight text-[#E9D8A6] lg:text-2xl">{project.name}</h3>
+          <h3 className="mt-2 break-words text-xl font-bold tracking-tight text-[#E9D8A6] sm:text-2xl">{project.name}</h3>
         </div>
         <StampBadge tone={tone(project.status)} tilted>{project.status}</StampBadge>
         </div>

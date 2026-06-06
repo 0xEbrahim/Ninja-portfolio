@@ -15,7 +15,7 @@ import { SignalDivider } from "./components/motion/SignalDivider";
 
 function App() {
   return (
-    <>
+    <div className="min-h-screen overflow-x-hidden bg-[#0A0D0B] text-[#E8EFEA]">
       <AnimatedBackground />
       <ArchiveHeatOverlay />
       <EmberScrollLayer />
@@ -40,7 +40,7 @@ function App() {
           <span className="font-mono text-xs">archive keeper: Ibrahim El-Sayed · 2026</span>
         </div>
       </footer>
-    </>
+    </div>
   );
 }
 

@@ -19,15 +19,15 @@ export function ServicesSection() {
     <section id="services" className="section-block">
       <div className="site-container">
         <FadeIn><MissionHeader archive="Archive 02" title="Jutsu Modules / Backend Services" heading="Techniques for reliable backend systems." description="Professional backend capabilities, filed as the modules I use to protect boundaries, move data, and ship dependable services." /></FadeIn>
-        <StaggerReveal className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <StaggerReveal className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {modules.map(({ icon: Icon, title, domain, description }, index) => (
-            <MissionCard key={title} tab={`module-${String(index + 1).padStart(2, "0")}`} className="min-h-[255px] p-7">
+            <MissionCard key={title} tab={`module-${String(index + 1).padStart(2, "0")}`} className="h-full min-w-0 p-5 sm:p-6">
               <div className="flex items-start justify-between">
                 <Icon className="h-5 w-5 text-[#A7C957]" strokeWidth={1.5} />
                 <span className="font-mono text-[9px] uppercase tracking-[0.15em] text-[#69766D]">signal: ready</span>
               </div>
-              <h3 className="mt-7 text-xl font-semibold text-[#E9D8A6]">{title}</h3>
-              <p className="mt-4 text-sm leading-7 text-[#9AA89E]">{description}</p>
+              <h3 className="mt-7 text-lg font-semibold text-[#E9D8A6] sm:text-xl">{title}</h3>
+              <p className="mt-4 text-sm leading-6 text-[#9AA89E] sm:text-base sm:leading-7">{description}</p>
               <div className="archive-divider my-5" />
               <MetadataRow label="domain">{domain}</MetadataRow>
             </MissionCard>

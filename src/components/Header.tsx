@@ -30,13 +30,13 @@ export function Header() {
 
   return (
     <motion.header initial={{ opacity: 0, y: reduced ? 0 : -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.02 }} className="sticky top-0 z-50 border-b border-[#2A362D] bg-[#0A0D0B]/95">
-      <nav className="site-container flex min-h-16 items-center justify-between" aria-label="Primary navigation">
-        <a href="#home" className="font-mono text-xs font-semibold text-[#E9D8A6] sm:text-sm">
+      <nav className="site-container flex min-h-16 items-center justify-between gap-3" aria-label="Primary navigation">
+        <a href="#home" className="min-w-0 truncate font-mono text-[10px] font-semibold text-[#E9D8A6] sm:text-sm">
           <span className="mr-2 text-[#A7C957]">封</span> Backend Shinobi Mission Archive
         </a>
         <button
           type="button"
-          className="border border-[#2A362D] p-2 text-[#9AA89E] xl:hidden"
+          className="inline-flex shrink-0 border border-[#2A362D] p-2 text-[#E9D8A6] xl:hidden"
           aria-label={open ? "Close navigation" : "Open navigation"}
           aria-expanded={open}
           onClick={() => setOpen((value) => !value)}
@@ -50,10 +50,12 @@ export function Header() {
         </div>
       </nav>
       {open && (
-        <nav className="site-container flex flex-wrap gap-x-6 gap-y-4 border-t border-[#2A362D] py-4 xl:hidden" aria-label="Mobile navigation">
-          {links.map(([label, href]) => (
-            <a key={href} href={href} className={active === href ? "nav-link nav-link-active" : "nav-link"} onClick={() => setOpen(false)}>{label}</a>
-          ))}
+        <nav className="site-container border-t border-[#2A362D] py-3 xl:hidden" aria-label="Mobile navigation">
+          <div className="grid gap-1 border border-[#2A362D] bg-[#111713] p-2">
+            {links.map(([label, href]) => (
+              <a key={href} href={href} className={`${active === href ? "nav-link nav-link-active" : "nav-link"} min-h-11 px-3 py-3`} onClick={() => setOpen(false)}>{label}</a>
+            ))}
+          </div>
         </nav>
       )}
     </motion.header>

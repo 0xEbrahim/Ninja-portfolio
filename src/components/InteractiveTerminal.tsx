@@ -31,7 +31,7 @@ function projectIndex() {
   return (
     <div className="space-y-1">
       {projects.map((project, index) => (
-        <p key={project.repo}>
+        <p key={project.repo} className="break-words">
           <span className="inline-block w-6 text-slate-500">{index + 1}.</span>
           <span className="text-sky-400">{project.name}</span>
           <span className="text-slate-500"> · {project.category} · </span>
@@ -118,10 +118,10 @@ export function InteractiveTerminal() {
 
     const commands: Record<string, ReactNode> = {
       help: (
-        <div className="space-y-1">
+        <div className="space-y-1 break-words">
           <p className="mb-2 text-slate-300">Available commands:</p>
           {helpItems.map(([name, description]) => (
-            <p key={name}><span className="inline-block w-48 text-sky-400">{name}</span>{description}</p>
+            <p key={name} className="grid gap-0.5 sm:grid-cols-[12rem_minmax(0,1fr)]"><span className="text-sky-400">{name}</span><span>{description}</span></p>
           ))}
         </div>
       ),
@@ -213,20 +213,20 @@ export function InteractiveTerminal() {
 
   return (
     <div className={`terminal ${highlighted ? "terminal-highlighted" : ""}`} onClick={() => inputRef.current?.focus()}>
-      <div className="terminal-header">
+      <div className="terminal-header min-w-0">
         <span className="h-2.5 w-2.5 rounded-full bg-red-400/70" />
         <span className="h-2.5 w-2.5 rounded-full bg-amber-400/70" />
         <span className="h-2.5 w-2.5 rounded-full bg-green-400/70" />
-        <div className="ml-3">
+        <div className="ml-3 min-w-0">
           <p className="font-mono text-xs text-[#E9D8A6]">Command Console</p>
-          <p className="mt-0.5 font-mono text-[10px] text-[#69766D]">// try: help, projects, project agora, logs, anime</p>
+          <p className="mt-0.5 break-words font-mono text-[10px] text-[#69766D]">// try: help, projects, project agora, logs, anime</p>
         </div>
       </div>
       <div ref={scrollContainerRef} className="terminal-body" aria-live="polite">
         {output.map((line, index) => (
           <motion.div key={index} className="mb-4" initial={{ opacity: 0, y: reduced ? 0 : 4 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
             {line.command && <p className="mb-1 text-[#E8EFEA]"><span className="text-[#A7C957]">{prompt}</span> {line.command}</p>}
-            <div className={line.error ? "text-red-400" : "text-slate-400"}>{line.content}</div>
+            <div className={`${line.error ? "text-red-400" : "text-slate-400"} break-words`}>{line.content}</div>
           </motion.div>
         ))}
         <form onSubmit={execute} className="flex items-center gap-2">

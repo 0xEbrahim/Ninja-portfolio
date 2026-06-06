@@ -54,13 +54,13 @@ export function AsciiShinobiArtifact() {
   const reduced = useReducedMotion();
   return (
     <motion.aside
-      className="ascii-artifact angled-corner paper-noise"
+      className="ascii-artifact angled-corner paper-noise min-w-0 overflow-hidden"
       initial={{ opacity: 0, y: reduced ? 0 : 14 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.5, ease: "easeOut" }}
     >
-      <div className="flex items-start justify-between gap-4 border-b border-[#2A362D] px-4 py-3">
+      <div className="flex flex-col items-start gap-3 border-b border-[#2A362D] px-4 py-3 sm:flex-row sm:justify-between sm:gap-4">
         <div>
           <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#A7C957]">ASCII Shinobi Artifact</p>
           <p className="mt-1 font-mono text-[8px] text-[#69766D]">archive.render / unicode silhouette</p>

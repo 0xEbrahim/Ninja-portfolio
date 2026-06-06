@@ -12,14 +12,14 @@ const nodes = [
 export function ArchitectureSection() {
   return (
     <section id="architecture" className="section-block">
-      <div className="site-container grid gap-14 lg:grid-cols-[0.85fr_1fr] lg:items-center">
+      <div className="site-container grid gap-10 lg:grid-cols-[0.85fr_1fr] lg:items-center lg:gap-14">
         <FadeIn>
           <MissionHeader archive="Archive 04" title="System Map / Architecture" heading="Boundaries mapped before deployment." description="A mission map for deciding what owns data, what scales independently, what can fail, and what belongs behind a cache or queue." />
           <p className="max-w-xl text-base leading-8 text-[#9AA89E]">
             Good architecture makes behavior understandable. The goal is not more services; it is a system that stays clear as requirements and traffic grow.
           </p>
         </FadeIn>
-        <FadeIn delay={0.08} className="architecture-flow mission-map angled-corner paper-noise p-6 sm:p-8">
+        <FadeIn delay={0.08} className="architecture-flow mission-map angled-corner paper-noise min-w-0 p-4 sm:p-6 lg:p-8">
           {nodes.map(([title, description], index) => (
             <div key={title}>
               <div className="architecture-block">

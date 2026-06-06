@@ -6,12 +6,13 @@
   html {
     scroll-behavior: smooth;
     background: #0a0d0b;
+    overflow-x: hidden;
   }
 
   body {
-    min-width: 320px;
     min-height: 100vh;
     margin: 0;
+    overflow-x: hidden;
     background: transparent;
     color: #e8efea;
     font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -35,11 +36,11 @@
 
 @layer components {
   .site-container {
-    @apply mx-auto w-full max-w-7xl px-6 lg:px-8;
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
   }
 
   .section-block {
-    @apply scroll-mt-16 py-20 lg:py-24;
+    @apply scroll-mt-16 py-14 sm:py-16 lg:py-24;
     border-top: 1px solid rgba(122, 168, 116, 0.15);
   }
 
@@ -91,7 +92,7 @@
   }
 
   .terminal-body {
-    @apply min-h-[330px] max-h-[440px] overflow-y-auto p-5 font-mono text-sm leading-6 sm:p-6;
+    @apply min-h-[300px] max-h-[360px] overflow-x-auto overflow-y-auto p-4 font-mono text-xs leading-6 sm:max-h-[430px] sm:p-5 sm:text-sm;
     scrollbar-color: #334155 transparent;
     scrollbar-width: thin;
   }
@@ -171,7 +172,7 @@
   }
 
   .log-stream {
-    @apply max-h-[440px] min-h-[360px] space-y-2 overflow-y-auto p-3 font-mono text-xs leading-5 sm:p-4 sm:text-sm;
+    @apply min-h-[300px] max-h-[420px] space-y-2 overflow-x-hidden overflow-y-auto p-3 font-mono text-xs leading-5 sm:min-h-[360px] sm:max-h-[440px] sm:p-4 sm:text-sm;
     scrollbar-color: #334155 transparent;
     scrollbar-width: thin;
   }
@@ -382,7 +383,7 @@
   }
 
   .mission-filter {
-    @apply border border-[#2A362D] bg-[#111713] px-3 py-2 font-mono text-[9px] uppercase tracking-wider text-[#69766D] hover:border-[#7AA874] hover:text-[#E9D8A6];
+    @apply inline-flex min-h-10 items-center justify-center border border-[#2A362D] bg-[#111713] px-3 py-2 font-mono text-xs uppercase tracking-wider text-[#69766D] hover:border-[#7AA874] hover:text-[#E9D8A6];
   }
 
   .mission-filter-active {
@@ -447,7 +448,7 @@
   }
 
   .ascii-artifact-viewport {
-    @apply max-h-[390px] overflow-auto p-3;
+    @apply max-h-[390px] max-w-full overflow-auto p-3;
     scrollbar-color: #2a362d transparent;
     scrollbar-width: thin;
   }
@@ -461,6 +462,11 @@
     font-size: 5px;
     line-height: 1;
     text-shadow: 0 0 12px rgba(167, 201, 87, 0.08);
+  }
+
+  .live-log-row > span:nth-child(4),
+  .live-log-row > span:nth-child(5) {
+    grid-column: 1 / -1;
   }
 
   .ember-particle {
@@ -529,6 +535,23 @@
   .signal-stream-active .live-log-row-new {
     border-color: rgba(233, 216, 166, 0.52);
     animation: incoming-pulse 700ms ease-out 1, archive-heat-pulse 1.6s ease-in-out infinite alternate;
+  }
+}
+
+@media (min-width: 640px) {
+  .live-log-row > span:nth-child(4),
+  .live-log-row > span:nth-child(5) {
+    grid-column: auto;
+  }
+
+  .ascii-artifact pre {
+    font-size: 6px;
+  }
+}
+
+@media (max-width: 639px) {
+  .ember-scroll-layer {
+    display: none;
   }
 }
 
