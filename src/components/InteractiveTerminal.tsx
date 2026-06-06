@@ -54,12 +54,15 @@ function lineTargets(content: ReactNode): number[] {
 
 function typeModeFor(command: string): TypeMode {
   const base = command.toLowerCase().split(/\s+/)[0];
-  return ["help", "projects", "repos", "ls", "logs", "anime", "shinobi", "naruto", "history"].includes(base) ? "line" : "char";
+  return ["help", "projects", "repos", "ls", "logs", "anime", "shinobi", "naruto", "history", "about", "profile", "cv"].includes(base) ? "line" : "char";
 }
 
 const helpItems = [
   ["help", "show available commands"],
-  ["whoami / about", "show profile summary"],
+  ["whoami", "show compact identity summary"],
+  ["about", "show detailed profile dossier"],
+  ["profile", "alias for about"],
+  ["cv", "show CV-based backend profile"],
   ["skills / stack", "show backend skills and technologies"],
   ["projects / repos / ls", "show project index"],
   ["project <name> / repo <name>", "inspect a project"],
@@ -70,6 +73,59 @@ const helpItems = [
   ["history", "show command history"],
   ["clear", "clear terminal"],
 ];
+
+function aboutDossier() {
+  return (
+    <div className="space-y-1">
+      <p className="pb-2 font-semibold tracking-wider text-[#A7C957]">PROFILE DOSSIER: Ibrahim El-Sayed</p>
+      <p className="pt-1 text-slate-300">role:</p>
+      <p className="pl-3">Software Engineer / Backend Engineer</p>
+      <p className="pt-2 text-slate-300">education:</p>
+      <p className="pl-3">Faculty of Engineering, Mansoura University</p>
+      <p className="pl-3">Bachelor of Engineering - Cumulative Grade: 94%</p>
+      <p className="pl-3">Expected graduation: July 2026</p>
+      <p className="pt-2 text-slate-300">focus:</p>
+      <p className="pl-3">Backend systems, APIs, databases, caching, queues, distributed systems, and infrastructure-minded development.</p>
+      <p className="pt-2 text-slate-300">experience:</p>
+      <p className="pl-3 text-sky-400">Sourcya - Software Engineer</p>
+      <p className="pl-6">- Built an IoT microservice that decodes hexadecimal device traffic into structured events.</p>
+      <p className="pl-6">- Designed RabbitMQ event-driven pipelines for traffic processing and persistence.</p>
+      <p className="pl-6">- Optimized SQL queries, fixed N+1 issues, and improved API performance.</p>
+      <p className="pl-3 pt-1 text-sky-400">Lesoll - Backend Developer</p>
+      <p className="pl-6">- Built JWT authentication with safer token rotation and persistent sessions.</p>
+      <p className="pl-6">- Built autosave drafts to reduce data loss under unstable connectivity.</p>
+      <p className="pl-6">- Added image caching that reduced response latency by around 30%.</p>
+      <p className="pt-2 text-slate-300">open source:</p>
+      <p className="pl-3 text-sky-400">GoFr</p>
+      <p className="pl-6">- Implemented gRPC server-side rate limiting with interceptors, token-bucket logic, logging, metrics, and tests.</p>
+      <p className="pl-6">- Fixed framework-level HTTP method behavior and improved test maintainability.</p>
+      <p className="pl-3 pt-1 text-sky-400">AncientBeast</p>
+      <p className="pl-6">- Helped migrate a legacy JavaScript codebase to TypeScript.</p>
+      <p className="pl-6">- Fixed type inconsistencies and improved build stability.</p>
+      <p className="pt-2 text-slate-300">skills:</p>
+      <p className="pl-3">Languages: JavaScript, TypeScript, Java, Go, C++, SQL</p>
+      <p className="pl-3">Backend: Node.js, Express.js, NestJS, Spring Boot</p>
+      <p className="pl-3">Data &amp; Infra: PostgreSQL, Redis, BullMQ, RabbitMQ, Docker/Compose, Git, Linux</p>
+      <p className="pl-3">Core: OOP, Design Patterns, Databases, Problem Solving</p>
+      <p className="pt-2 text-slate-300">achievements:</p>
+      <p className="pl-3">ECPC contestant - 2023, 2025</p>
+      <p className="pl-3">Ranked 7th on Day 4 of qualifications</p>
+      <p className="pl-3">Ranked 63rd among 300+ teams in ECPC 2025 qualifications across Egypt</p>
+      <p className="pt-2 text-slate-300">mission:</p>
+      <p className="pl-3 text-[#E9D8A6]">Build reliable backend systems that are silent, precise, scalable, and easy to reason about.</p>
+    </div>
+  );
+}
+
+function shortAbout() {
+  return (
+    <div className="space-y-1">
+      <p>Ibrahim El-Sayed - Software Engineer / Backend Engineer.</p>
+      <p>Engineering student at Mansoura University with 94% cumulative grade.</p>
+      <p>Experienced in Node.js, NestJS, Go, Java, Redis, RabbitMQ, Docker, SQL optimization, IoT microservices, and open-source contributions.</p>
+    </div>
+  );
+}
 
 function projectIndex() {
   return (
@@ -166,6 +222,9 @@ export function InteractiveTerminal() {
     const argument = args.join(" ");
 
     if (command === "clear") return "clear";
+    if (["about", "profile", "cv"].includes(command)) {
+      return { content: argument === "--short" ? shortAbout() : aboutDossier() };
+    }
     if (command === "project" || command === "repo") {
       return argument
         ? projectDetails(argument)
@@ -183,10 +242,10 @@ export function InteractiveTerminal() {
       ),
       whoami: (
         <div className="space-y-1">
-          <p className="text-slate-200">Ibrahim El-Sayed · Backend Engineer</p>
+          <p className="text-slate-200">Ibrahim El-Sayed</p>
+          <p>Backend Engineer / Software Engineer</p>
           <p>Alias: 0xEbrahim</p>
-          <p>I code, script then hack | Back-End | DevOps</p>
-          <p>Focus: APIs, distributed systems, databases, caching, and infrastructure</p>
+          <p>Type <span className="text-sky-400">"about"</span> for the full profile dossier.</p>
         </div>
       ),
       skills: (
@@ -224,7 +283,6 @@ export function InteractiveTerminal() {
     };
 
     const aliases: Record<string, string> = {
-      about: "whoami",
       repos: "projects",
       ls: "projects",
     };
@@ -312,7 +370,7 @@ export function InteractiveTerminal() {
         <span className="h-2.5 w-2.5 rounded-full bg-green-400/70" />
         <div className="ml-3 min-w-0">
           <p className="font-mono text-xs text-[#E9D8A6]">Command Console</p>
-          <p className="mt-0.5 break-words font-mono text-[10px] text-[#69766D]">// try: help, projects, project agora, logs, anime</p>
+          <p className="mt-0.5 break-words font-mono text-[10px] text-[#69766D]">// try: help, about, projects, project agora, logs, anime</p>
         </div>
       </div>
       <div ref={scrollContainerRef} className="terminal-body" aria-live="polite">
